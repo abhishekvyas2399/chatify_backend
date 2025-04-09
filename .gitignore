@@ -1,4 +1,4 @@
 /node_modules/
 ssh.txt
 ssh.txt.pub
-config/.env
+/config/.env
