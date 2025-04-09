@@ -49,4 +49,4 @@ const connectDB_then_startServer=async ()=>{ // first connectDB then start serve
     await connectDB(); // connect to mongoDB
     server.listen(PORT,()=>{console.log(`server running at port ${PORT}`)});
 }
-connectDB_then_startServer()
+connectDB_then_startServer()//
