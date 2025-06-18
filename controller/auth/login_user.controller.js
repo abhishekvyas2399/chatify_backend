@@ -7,7 +7,7 @@ async function loginUser(req,res){
     // zod validation
     const result=loginValidate.safeParse(req.body);
     if(!(result.success)){
-        res.json({msg:"invalid data"});
+        res.status(401).json({msg:"invalid data"});
         return;
     }
 

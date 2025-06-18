@@ -1,8 +1,8 @@
 const zod=require("zod");
 
 const user_validate=zod.object({
-    name:zod.string().min(1),
-    username:zod.string().min(8),
+    name:zod.string().min(4),
+    username:zod.string().min(4),
     password:zod.string().min(8)
 });
 
