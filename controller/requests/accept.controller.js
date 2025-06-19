@@ -17,7 +17,7 @@ const acceptController=async (req,res)=>{
     }
 
     const request=await request_model.findById(req.params.requestID);
-    if(request.status=="accepted" || request.status=="rejected"){  // if request already responded
+    if(!request || request.status=="accepted" || request.status=="rejected"){  // if request already responded
         res.status(401).json({msg:"invalid request....."});
         return;
     }
@@ -25,11 +25,11 @@ const acceptController=async (req,res)=>{
     if(user._id.equals(request.reciever_id)){ // is requet to that user
         // update to accept & create new chat
         await request_model.findByIdAndUpdate(request._id,{$set:{status:"accepted"}},{new:true});
-        await chat_model.create({
+        const chat=await chat_model.create({
             users:[request.sender_id,request.reciever_id],
             username:[request.sender_name,request.reciever_name],
         }); 
-        res.json({msg:"request accepted"});
+        res.json({msg:"request accepted",chat_id:chat._id});
         return;
     }
     // is request to this jwt owner group & he is admin

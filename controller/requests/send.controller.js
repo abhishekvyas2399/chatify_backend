@@ -23,7 +23,20 @@ const sendController=async (req,res)=>{
         // if request already send so check ?
         const exist=await request_model.findOne({sender_id:request_by._id,reciever_id:request_to._id});
         if(exist){
-            res.json({msg:"request send to user"});
+            if(exist.status==="accepted")
+                res.json({msg:"he is already your friend !!!"});
+            else if(exist.status==="rejected")
+                res.json({msg:"already rejected by him so cant send him request !!!"});
+            else
+                res.json({msg:"request already send !!!"});
+            return;
+        }
+        const exist_his_req=await request_model.findOne({sender_id:request_to._id,reciever_id:request_by._id});
+        if(exist_his_req){
+            if(exist_his_req.status==="accepted")
+                res.json({msg:"he is already your friend !!!"});
+            else if(exist_his_req.status==="pending")
+                res.json({msg:"you already have his request accept it !!!"});
             return;
         }
         // put request in request table with sender_id,receiever_id
