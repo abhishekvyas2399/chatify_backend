@@ -34,7 +34,7 @@ app.use("/api/users",users); // user_INFO get,update
 app.use("/api/chats",chats); // create , retrieve chat
 app.use("/api/messages",messages); //  store & get msg
 app.use("/api/notifications",notifications); //  handle notification when a new msg arrive  (byme:-make unread attribute in table in DB)
-app.use("/api/uploads",uploads); //  handle profile picture & chat media upload
+app.use("/api/uploads",uploads); //  give upload signed url
 app.use((err,req,res,next)=>{
     console.log(err.message)
     res.status(500).json({msg:"server error....."});

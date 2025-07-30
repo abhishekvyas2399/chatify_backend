@@ -1,15 +1,12 @@
-const request_model=require("../../models/request_model");
-const user_model=require("../../models/user_model");
+const requestModel=require("../../models/request_model");
+const userModel=require("../../models/user_model");
 
 const pendingController=async (req,res)=>{
-    const user=await user_model.findOne({username:req.username});
-    if(!user){
-        res.status(401).json({msg:"invalid user....."});
-        return;
-    }
+    const user=await userModel.findOne({username:req.username});
+    if(!user)   return res.status(401).json({msg:"invalid user....."});
 
-    const Allrequests=await request_model.find({reciever_id:user._id,status: "pending"});
-    res.json({msg:Allrequests});
+    const allRequests=await requestModel.find({recieverId:user._id,status: "pending"});
+    res.json({allRequests});
 }
 
 module.exports=pendingController;

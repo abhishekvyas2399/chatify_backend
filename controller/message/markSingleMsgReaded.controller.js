@@ -3,11 +3,14 @@ const userModel=require("../../models/user_model");
 const chatModel=require("../../models/chat_model");
 const messageModel = require("../../models/message_model");
 
-const markMsgReaded=async (req,res)=>{
+const markSingleMsgReaded=async (req,res)=>{
     const chatId=req.params.chatId;
+    const msgId=req.body.msgId;
     if(!chatId)    return res.json("invalid data.....");
+    if(!msgId)    return res.json("invalid data.....");
 
     if(!mongoose.Types.ObjectId.isValid(chatId))    return res.json("invalid data.....");
+    if(!mongoose.Types.ObjectId.isValid(msgId))    return res.json("invalid data.....");
 
     const user=await userModel.findOne({username:req.username});
     if(!user)    return res.status(401).json("Unauthorized Access.....");
@@ -19,11 +22,12 @@ const markMsgReaded=async (req,res)=>{
     return res.status(401).json("you are not in that chat.....");
 
     try{
-        await messageModel.updateMany({chatId,senderId:{$ne:user._id},isRead:{$ne:"read"}},{$set:{isRead:"read"}});
-        res.json({msg:"mark readed"});
+        const msg=await messageModel.updateOne({_id:msgId,chatId,senderId:{$ne:user._id},isRead:{$ne:"read"}},{$set:{isRead:"read"}});
+        if(msg.modifiedCount==0)    return res.status(401).json({msg:"invalid msg..."});
+        return res.json({msg:"mark readed"});
     }catch(e){
-        res.status(500).json({msg:"server Error"});
+        return res.status(500).json({msg:"server Error"});
     }
 }
 
-module.exports=markMsgReaded;
+module.exports=markSingleMsgReaded;

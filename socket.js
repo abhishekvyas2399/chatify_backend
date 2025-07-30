@@ -7,9 +7,12 @@ module.exports=(io)=>{
             console.log(chatId," room joined");
             socket.join(chatId);
         });
-        socket.on("chat Message",({chatId,newMessage,senderId,senderName})=>{
-            const message = {chatId,text: newMessage,senderId,senderName,timestamp: new Date().toISOString()};  // full details
-            io.to(chatId).emit("chat Message",message);  // broadcast to all user in chat Message
+        socket.on("chat Message",(msg)=>{
+            const chatId=msg.chatId;
+            io.to(chatId).emit("chat Message",msg);  // broadcast to all user in chat Message
+        });
+        socket.on("read recipt",(data)=>{
+            socket.to(data.chatId).emit("read recipt",data);
         });
 
         socket.on("typing",({chatId,userId})=>{

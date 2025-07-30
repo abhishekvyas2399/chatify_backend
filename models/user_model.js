@@ -11,4 +11,4 @@ const userschema=new mongoose.Schema({
 // 	2.	updatedAt → Updates automatically whenever the document is modified.
 // Benefit: No need to manually handle timestamps, useful for tracking record history.
 
-module.exports=mongoose.model('user_model',userschema);
+module.exports=mongoose.model('user',userschema);

@@ -1,51 +1,40 @@
 const mongoose=require("mongoose");
-const user_model=require("../../models/user_model");
-const chat_model=require("../../models/chat_model");
-const message_model = require("../../models/message_model");
+const userModel=require("../../models/user_model");
+const chatModel=require("../../models/chat_model");
+const messageModel = require("../../models/message_model");
 
 const StoreMessage=async (req,res)=>{
-    const chat_Id=req.body.chat_Id;
-    const message=req.body.message;
-    if((!(chat_Id && message)) || message==""){
-        res.json("invalid data.....");
-        return;
-    }
-    if(!mongoose.Types.ObjectId.isValid(chat_Id)){
-        res.json("invalid data.....");
-        return;
-    }
-
-    const user=await user_model.findOne({username:req.username});
-    if(!user){
-        res.status(401).json("Unauthorized Access.....");
-        return;
-    }
-
-    const chat=await chat_model.findById(chat_Id);
-    if(!chat){
-        res.status(404).json("no such chat exist.....");
-        return;
-    }
-
-    let heExistinChat=false;
-    const chatLength=chat.users.length;
-    for(let i=0;i<chatLength;i++){
-        if(chat.users[i].equals(user._id)){
-            heExistinChat=true;
-            break;
-        }       
-    }
-    if(!heExistinChat){
-        res.status(401).json("you are not in that chat.....");
-        return;
-    }
+    const chatId=req.body.chatId;
+    const message=req.body.newMessage;
+    const filePath=req.body.filePath;
+    const fileType=req.body.fileType;
+    if(!chatId || (!message && (!filePath || !fileType)) || (message=="" && (!filePath || !fileType)))    return res.status(400).json("invalid data.....1");
     
-    const sender_Id=user._id;
-    const sender_name=user.username;
+    if(!mongoose.Types.ObjectId.isValid(chatId))    return res.status(400).json("invalid data.....");
 
-    await message_model.create({chat_Id,sender_Id,sender_name,message});
+    const user=await userModel.findOne({username:req.username});
+    if(!user)    return res.status(401).json("Unauthorized Access.....");
 
-    res.json({msg:"msg stored"});
+    const chat=await chatModel.findById(chatId);
+    if(!chat)    return res.status(404).json("no such chat exist.....");
+
+    if( !(chat.users[0].equals(user._id)) && !(chat.users[1].equals(user._id)) )
+    return res.status(401).json("you are not in that chat.....");
+    
+    const senderId=user._id;
+    const senderName=user.username;
+
+    try{
+        let query;
+        if(message && filePath)  query={chatId,senderId,senderName,message,filePath,fileType};
+        else if(message)  query={chatId,senderId,senderName,message};
+        else  query={chatId,senderId,senderName,filePath,fileType};
+        
+        const msg=await messageModel.create(query);
+        res.json(msg);
+    }catch(e){
+        res.status(500).json({msg:"server error"});
+    }
 }
 
 

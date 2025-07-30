@@ -1,21 +1,15 @@
-const user_validate=require("../../zod_validations/user_validate");
-const user_model=require("../../models/user_model");
-const {hashPassword}=require("../../utils/hash_compare_password");
+const userValidate=require("../../zod_validations/user_validate");
+const userModel=require("../../models/user_model");
+const {hashPassword}=require("../../utils/hashComparePassword");
 
 async function registerUser(req,res){
     // zod validation (put it in middleware)
-    const result=user_validate.safeParse(req.body);
-    if(!(result.success)){
-        res.status(400).json({msg:"invalid data"});
-        return;
-    }
+    const result=userValidate.safeParse(req.body);
+    if(!(result.success))    return res.status(400).json({msg:"invalid data"});
 
     // not make user if duplicate userName (put it also in middleware)
-    const u=await user_model.findOne({username:req.body.username});
-    if(u){
-        res.status(409).json({msg:"username already used"});
-        return;
-    }
+    const u=await userModel.findOne({username:req.body.username});
+    if(u)    return res.status(409).json({msg:"username already used"});
 
     const name=req.body.name;
     const username=req.body.username;
@@ -23,8 +17,12 @@ async function registerUser(req,res){
     const profilePic="profileurl_in_future";
 
     // create user in MongoDB
-    await user_model.create({name,username,password,profilePic});
-    res.json({msg:"user created"});
+    try{
+        await userModel.create({name,username,password,profilePic});
+        return res.json({msg:"user created"});
+    }catch(e){
+        return res.status(500).json({msg:'server error'});
+    }
 }
 
 module.exports=registerUser;

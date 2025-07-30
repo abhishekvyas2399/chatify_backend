@@ -10,5 +10,10 @@ dotenv.config({path:path.join(__dirname,".env")});  // config() load envirnmenta
 module.exports={
     DB:process.env.DB,
     PORT:process.env.PORT,
-    JWTpassword:process.env.JWTpassword
+    JWTpassword:process.env.JWTpassword,
+    s3access_key_id:process.env.access_key_id,
+    s3secret_access_key:process.env.secret_access_key,
+    s3endpoint:process.env.endpoint,
+    s3region:process.env.region,
+    s3bucket_name:process.env.bucket_name,
 }
