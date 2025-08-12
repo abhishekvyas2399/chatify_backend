@@ -11,7 +11,6 @@ const chatSchema=new mongoose.Schema({
     usernames:[{type:String}],  // 2 users in chat
     lastMessage:{type:String}, // this 3 are for show recent chats & previews in chat list, without querying the messages collection each time
     fileType:{type:String},
-    updatedAt:{type:Date},
 },{timestamps:true});
 
 module.exports=mongoose.model("chat",chatSchema);

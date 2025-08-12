@@ -31,6 +31,10 @@ const StoreMessage=async (req,res)=>{
         else  query={chatId,senderId,senderName,filePath,fileType};
         
         const msg=await messageModel.create(query);
+        await chatModel.updateOne(
+            { _id: chatId },
+            { $set: { lastMessage: message || null,fileType: fileType || null}}
+        );
         res.json(msg);
     }catch(e){
         res.status(500).json({msg:"server error"});

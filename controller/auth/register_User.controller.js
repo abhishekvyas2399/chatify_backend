@@ -14,7 +14,7 @@ async function registerUser(req,res){
     const name=req.body.name;
     const username=req.body.username;
     const password=await hashPassword(req.body.password); // hash password
-    const profilePic="profileurl_in_future";
+    const profilePic="";
 
     // create user in MongoDB
     try{
